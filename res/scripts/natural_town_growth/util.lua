@@ -28,6 +28,10 @@ function functions.getCargoTypes()
   )
 end
 
+function functions.getCargoTypeIds()
+  return game.interface.getCargoTypes()
+end
+
 function functions.getCommercialCargoTypes()
   return col.filter(
     functions.getCargoTypes(),
@@ -65,11 +69,11 @@ function functions.getIndustrialCargoTypeIds()
 end
 
 function functions.getTownPublicTransportReachability(town)
-  game.interface.getTownReachability(town.id)[2]
+  return game.interface.getTownReachability(town.id)[2]
 end
 
 function functions.getTownPrivateTransportReachability(town)
-  game.interface.getTownReachability(town.id)[1]
+  return game.interface.getTownReachability(town.id)[1]
 end
 
 return functions

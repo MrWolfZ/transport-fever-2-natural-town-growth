@@ -23,6 +23,8 @@ function data()
 			foo = { { "test1", _("Test entry 1") }, { "test2", _("Test entry 2") } },
 		},
 		runFn = function (settings)
+			game.config.townDevelopInterval = 20
+
 			game.config.mrwolfz = game.config.mrwolfz or {}
 			game.config.mrwolfz.naturalTownGrowth = {
 				baseCapacity = {
@@ -45,6 +47,9 @@ function data()
 				},
 				growth = {
 					residential = {
+						supplyFactor = 0.5,
+						publicTransportReachabilityFactor = 0.02,
+						privateTransportReachabilityFactor = 0.02,
 					},
 					commercial = {
 						supplyFactor = 2,
