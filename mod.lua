@@ -23,13 +23,16 @@ function data()
 			foo = { { "test1", _("Test entry 1") }, { "test2", _("Test entry 2") } },
 		},
 		runFn = function (settings)
+			-- not sure if this works, but it seems useful to decrease
+			-- the develop interval due to the increase in town sizes
 			game.config.townDevelopInterval = 20
 
+			-- create a separate config state container to ensure there are no conflicts
 			game.config.mrwolfz = game.config.mrwolfz or {}
 			game.config.mrwolfz.naturalTownGrowth = {
 				baseCapacity = {
 					initial = 100,
-					growthPerYear = 1,
+					growthPerYear = 0.5,
 					scalingFactors = {
 						residential = {
 							min = 0.8,
@@ -47,19 +50,19 @@ function data()
 				},
 				growth = {
 					residential = {
-						supplyFactor = 0.5,
-						publicTransportReachabilityFactor = 0.02,
-						privateTransportReachabilityFactor = 0.02,
+						supplyFactor = 0.2,
+						publicTransportReachabilityFactor = 0.015,
+						privateTransportReachabilityFactor = 0.015,
 					},
 					commercial = {
-						supplyFactor = 2,
-						publicTransportReachabilityFactor = 0.01,
-						privateTransportReachabilityFactor = 0.01,
+						supplyFactor = 1.5,
+						publicTransportReachabilityFactor = 0.005,
+						privateTransportReachabilityFactor = 0.005,
 					},
 					industrial = {
-						supplyFactor = 2,
-						publicTransportReachabilityFactor = 0.01,
-						privateTransportReachabilityFactor = 0.01,
+						supplyFactor = 1.5,
+						publicTransportReachabilityFactor = 0.005,
+						privateTransportReachabilityFactor = 0.005,
 					},
 				},
 			}

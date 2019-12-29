@@ -15,12 +15,13 @@ local levelNames = {
 }
 
 logging.levels = {
-  DEFAULT = TRACE, -- TODO: change to INFO
   TRACE = TRACE,
   DEBUG = DEBUG,
   INFO = INFO,
   WARN = WARN,
   ERROR = ERROR,
+
+  DEFAULT = INFO,
 }
 
 local currentLogLevel = logging.levels.DEFAULT
