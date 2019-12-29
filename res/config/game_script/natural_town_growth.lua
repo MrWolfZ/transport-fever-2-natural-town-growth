@@ -5,11 +5,12 @@ local serialization = require 'natural_town_growth/serialization'
 local util = require 'natural_town_growth/util'
 
 local state = {
-  version = 0,
-  counter = 0,
+  minorVersion = 0,
+  lastUpdatedAtEpoch = 0,
   baseCapacity = {
     scalingFactors = {},
   },
+  capacitiesByTownId = {},
 }
 
 local function getBaseCapacity()
@@ -156,15 +157,73 @@ local function setBaseCapacityScalingFactors()
 end
 
 local function setTownCapacities()
-  log.trace('setting town capacities...')
+  log.debug('setting town capacities...')
 
   util.forEachTown(
     function(town)
+      local currentEpoch = util.getEpoch()
+
+      -- ensure capacities for city are initialized
+      state.capacitiesByTownId[town.id] = state.capacitiesByTownId[town.id] or {
+        residential = {
+          value = 0,
+          setAtEpoch = currentEpoch,
+        },
+        commercial = {
+          value = 0,
+          setAtEpoch = currentEpoch,
+        },
+        industrial = {
+          value = 0,
+          setAtEpoch = currentEpoch,
+        },
+      }
+
+      local capacities = state.capacitiesByTownId[town.id]
+      
+      local residential = calculateResidentialCapacity(town)
+      local commercial = calculateCommercialCapacity(town)
+      local industrial = calculateIndustrialCapacity(town)
+
+      -- to prevent size decreases due to fluctuating supply we only accept size
+      -- decreases if some time has passed since the last update
+      local decreaseThresholdInSeconds = util.getSettings().timeThresholdForSizeDecreaseInSeconds
+
+      local secondsSinceLastResidentialUpdate = currentEpoch - capacities.residential.setAtEpoch
+      local prevResidential = capacities.residential.value
+      local residentialShouldUpdate = residential > prevResidential or (residential < prevResidential and secondsSinceLastResidentialUpdate > decreaseThresholdInSeconds)
+      if residentialShouldUpdate then
+        capacities.residential.value = residential
+        capacities.residential.setAtEpoch = currentEpoch
+      else
+        log.debug('skipping residential size decrease for town ' .. town.name .. ' since only ' .. secondsSinceLastResidentialUpdate .. ' seconds have passed since last update...')
+      end
+
+      local secondsSinceLastCommercialUpdate = currentEpoch - capacities.commercial.setAtEpoch
+      local prevCommercial = capacities.commercial.value
+      local commercialShouldUpdate = commercial > prevCommercial or (commercial < prevCommercial and secondsSinceLastCommercialUpdate > decreaseThresholdInSeconds)
+      if commercialShouldUpdate then
+        capacities.commercial.value = commercial
+        capacities.commercial.setAtEpoch = currentEpoch
+      else
+        log.debug('skipping commercial size decrease for town ' .. town.name .. ' since only ' .. secondsSinceLastCommercialUpdate .. ' seconds have passed since last update...')
+      end
+
+      local secondsSinceLastIndustrialUpdate = currentEpoch - capacities.industrial.setAtEpoch
+      local prevIndustrial = capacities.industrial.value
+      local industrialShouldUpdate = industrial > prevIndustrial or (industrial < prevIndustrial and secondsSinceLastIndustrialUpdate > decreaseThresholdInSeconds)
+      if industrialShouldUpdate then
+        capacities.industrial.value = industrial
+        capacities.industrial.setAtEpoch = currentEpoch
+      else
+        log.debug('skipping industrial size decrease for town ' .. town.name .. ' since only ' .. secondsSinceLastIndustrialUpdate .. ' seconds have passed since last update...')
+      end
+
       game.interface.setTownCapacities(
         town.id,
-        calculateResidentialCapacity(town),
-        calculateCommercialCapacity(town),
-        calculateIndustrialCapacity(town)
+        capacities.residential.value,
+        capacities.commercial.value,
+        capacities.industrial.value
       )
     end
   )
@@ -173,39 +232,59 @@ end
 local function init()
   log.info('initializing mod...')
 
-  -- debug.printTowns()
-  -- debug.printCargoTypes()
-
   setBaseCapacityScalingFactors()
   setTownCapacities()
 end
 
 local function update()
   -- prevent updating the capacities too often unnecessarily
-  if state.counter >= 100 then
-    setTownCapacities()
+  local currentEpoch = util.getEpoch()
+  local secondsSinceLastUpdate = currentEpoch - state.lastUpdatedAtEpoch
 
-    -- debug.printTowns()
-    -- debug.printTownCapacities()
-
-    state.counter = 0
+  if secondsSinceLastUpdate < 10 then
+    log.trace('skipping update since only ' .. secondsSinceLastUpdate .. ' seconds have passed since last update...')
+    return
   end
 
-  state.counter = state.counter + 1
+  setTownCapacities()
 end
 
 local function save()
+  state.minorVersion = game.config.mrwolfz.naturalTownGrowth.minorVersion
+
   return state
 end
 
-local function load(allState)
+local stateMigrations = {
+  [0] = function (state)
+    state.capacitiesByTownId = {}
+    state.lastUpdatedAtEpoch = 0
+    return state
+  end,
+}
+
+local function load(loadedState)
   -- handle case where mod is added to existing save game
-  if not allState then
+  if not loadedState then
     init()
-    allState = state
+    loadedState = state
   end
 
-  state = allState
+  -- run state migrations
+  local currentMinorVersion = game.config.mrwolfz.naturalTownGrowth.minorVersion
+  if currentMinorVersion > loadedState.minorVersion then
+    log.info('running state migrations for loaded state of minor version ' .. loadedState.minorVersion .. ' to current minor version ' .. currentMinorVersion ..'...')
+    for i = loadedState.minorVersion, currentMinorVersion do
+      if stateMigrations[i] then
+        log.info('running state migrations for version ' .. i .. '...')
+        loadedState = stateMigrations[i](loadedState)
+      end
+    end
+  end
+
+  loadedState.minorVersion = currentMinorVersion
+
+  state = loadedState
 end
 
 function data()

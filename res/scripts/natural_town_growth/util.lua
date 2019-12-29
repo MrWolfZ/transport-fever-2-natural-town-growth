@@ -6,6 +6,10 @@ function functions.getSettings()
   return game.config.mrwolfz.naturalTownGrowth
 end
 
+function functions.getEpoch()
+  return os.time(os.date("!*t"))
+end
+
 function functions.forEachTown(fn)
   local townIds = game.interface.getTowns()
   local towns = col.map(

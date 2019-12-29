@@ -1,7 +1,9 @@
 function data()
+	local minorVersion = 1
+
 	return {
 		info = {
-			minorVersion = 0,
+			minorVersion = minorVersion,
 			severityAdd = "NONE",
 			severityRemove = "NONE",
 			name = _("Name"),
@@ -71,6 +73,7 @@ function data()
 			--  2050 | 1200 |    0 | 10000 | 5000 |  821 |  800 |  175 | 133 | 300 | 3695 | 3733 | 1233
 			
 			game.config.mrwolfz.naturalTownGrowth = {
+				minorVersion = minorVersion,
 				baseCapacity = {
 					initial = 100,
 					growthPerYear = 0.5,
@@ -106,6 +109,7 @@ function data()
 						privateTransportReachabilityFactor = 0.005,
 					},
 				},
+				timeThresholdForSizeDecreaseInSeconds = 180,
 			}
 		end,
 	}
