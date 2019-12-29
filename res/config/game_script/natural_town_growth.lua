@@ -24,25 +24,21 @@ local function calculateResidentialCapacity(town)
 
   log.trace('town ' .. town.name .. ' has cargo type IDs: ' .. serialization.stringify(cargoSupplyTypeIds))
 
-  local sumOfCargoSupplyRatios = 0
+  local sumOfCargoSupplies = 0
   col.forEach(
     cargoSupplyTypeIds,
     function (cargoTypeId)
       local currentSupply = cargoSupply[cargoTypeId][1]
-      local maxSupply = cargoSupply[cargoTypeId][2]
-
-      sumOfCargoSupplyRatios = sumOfCargoSupplyRatios + (currentSupply / maxSupply)
+      sumOfCargoSupplies = sumOfCargoSupplies + currentSupply
     end
   )
 
-  local averageCargoSupply = sumOfCargoSupplyRatios / #cargoSupplyTypeIds
-
-  log.trace('town ' .. town.name .. ' has average cargo supply of ' .. averageCargoSupply)
+  log.trace('town ' .. town.name .. ' has total cargo supply of ' .. sumOfCargoSupplies)
 
   local config = util.getSettings().growth.residential
 
   local scaledBaseCapacity = getBaseCapacity() * state.baseCapacity.scalingFactors[town.id].residential
-  local capacityFromSupply = getBaseCapacity() * averageCargoSupply * config.supplyFactor
+  local capacityFromSupply = sumOfCargoSupplies * config.cargoSupplyFactor
   local capacityFromPublicTransportReachability = util.getTownPublicTransportReachability(town) * config.publicTransportReachabilityFactor
   local capacityFromPrivateTransportReachability = util.getTownPrivateTransportReachability(town) * config.privateTransportReachabilityFactor
   local capacityFromReachability = capacityFromPublicTransportReachability + capacityFromPrivateTransportReachability
@@ -67,25 +63,21 @@ local function calculateCommercialCapacity(town)
 
   log.trace('town ' .. town.name .. ' has commercial cargo type IDs: ' .. serialization.stringify(commercialCargoSupplyTypeIds))
 
-  local sumOfCommercialCargoSupplyRatios = 0
+  local sumOfCommercialCargoSupplies = 0
   col.forEach(
     commercialCargoSupplyTypeIds,
     function (cargoTypeId)
       local currentSupply = cargoSupply[cargoTypeId][1]
-      local maxSupply = cargoSupply[cargoTypeId][2]
-
-      sumOfCommercialCargoSupplyRatios = sumOfCommercialCargoSupplyRatios + (currentSupply / maxSupply)
+      sumOfCommercialCargoSupplies = sumOfCommercialCargoSupplies + currentSupply
     end
   )
 
-  local averageCommercialCargoSupply = sumOfCommercialCargoSupplyRatios / #commercialCargoSupplyTypeIds
-
-  log.trace('town ' .. town.name .. ' has average commercial cargo supply of ' .. averageCommercialCargoSupply)
+  log.trace('town ' .. town.name .. ' has commercial cargo supply of ' .. sumOfCommercialCargoSupplies)
 
   local config = util.getSettings().growth.commercial
 
   local scaledBaseCapacity = getBaseCapacity() * state.baseCapacity.scalingFactors[town.id].commercial
-  local capacityFromSupply = getBaseCapacity() * averageCommercialCargoSupply * config.supplyFactor
+  local capacityFromSupply = sumOfCommercialCargoSupplies * config.cargoSupplyFactor
   local capacityFromPublicTransportReachability = util.getTownPublicTransportReachability(town) * config.publicTransportReachabilityFactor
   local capacityFromPrivateTransportReachability = util.getTownPrivateTransportReachability(town) * config.privateTransportReachabilityFactor
   local capacityFromReachability = capacityFromPublicTransportReachability + capacityFromPrivateTransportReachability
@@ -110,25 +102,22 @@ local function calculateIndustrialCapacity(town)
 
   log.trace('town ' .. town.name .. ' has industrial cargo type IDs: ' .. serialization.stringify(industrialCargoSupplyTypeIds))
 
-  local sumOfIndustrialCargoSupplyRatios = 0
+  local sumOfIndustrialCargoSupplies = 0
   col.forEach(
     industrialCargoSupplyTypeIds,
     function (cargoTypeId)
       local currentSupply = cargoSupply[cargoTypeId][1]
-      local maxSupply = cargoSupply[cargoTypeId][2]
-
-      sumOfIndustrialCargoSupplyRatios = sumOfIndustrialCargoSupplyRatios + (currentSupply / maxSupply)
+      sumOfIndustrialCargoSupplies = sumOfIndustrialCargoSupplies + currentSupply
     end
   )
 
-  local averageIndustrialCargoSupply = sumOfIndustrialCargoSupplyRatios / #industrialCargoSupplyTypeIds
 
-  log.trace('town ' .. town.name .. ' has average industrial cargo supply of ' .. averageIndustrialCargoSupply)
+  log.trace('town ' .. town.name .. ' has industrial cargo supply of ' .. sumOfIndustrialCargoSupplies)
 
   local config = util.getSettings().growth.commercial
 
   local scaledBaseCapacity = getBaseCapacity() * state.baseCapacity.scalingFactors[town.id].industrial
-  local capacityFromSupply = getBaseCapacity() * averageIndustrialCargoSupply * config.supplyFactor
+  local capacityFromSupply = sumOfIndustrialCargoSupplies * config.cargoSupplyFactor
   local capacityFromPublicTransportReachability = util.getTownPublicTransportReachability(town) * config.publicTransportReachabilityFactor
   local capacityFromPrivateTransportReachability = util.getTownPrivateTransportReachability(town) * config.privateTransportReachabilityFactor
   local capacityFromReachability = capacityFromPublicTransportReachability + capacityFromPrivateTransportReachability
