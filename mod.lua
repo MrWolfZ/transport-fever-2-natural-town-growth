@@ -1,5 +1,5 @@
 function data()
-	local minorVersion = 1
+	local minorVersion = 0
 
 	return {
 		info = {

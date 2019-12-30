@@ -256,11 +256,9 @@ local function save()
 end
 
 local stateMigrations = {
-  [0] = function (state)
-    state.capacitiesByTownId = {}
-    state.lastUpdatedAtEpoch = 0
-    return state
-  end,
+  -- [0] = function (state)
+  --   return state
+  -- end,
 }
 
 local function load(loadedState)
