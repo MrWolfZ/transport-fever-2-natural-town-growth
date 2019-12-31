@@ -14,9 +14,9 @@ local state = {
 }
 
 local function getBaseCapacity()
-	local year = game.interface.getGameTime().date.year
+  local year = game.interface.getGameTime().date.year
   local config = util.getSettings().baseCapacity
-	return config.initial + (year - 1850) * config.growthPerYear
+  return config.initial + (year - 1850) * config.growthPerYear
 end
 
 local function calculateResidentialCapacity(town)
@@ -130,7 +130,7 @@ local function calculateIndustrialCapacity(town)
   return industrialCapacity
 end
 
-local function setBaseCapacityScalingFactors()
+local function createBaseCapacityScalingFactors()
   log.debug('setting town scaling factors...')
 
   local config = util.getSettings().baseCapacity.scalingFactors
@@ -139,21 +139,25 @@ local function setBaseCapacityScalingFactors()
   -- we forcefully reseed the random generator
   math.randomseed(os.time())
 
+  local scalingFactors = {}
+
   util.forEachTown(
     function(town)
       local residential = math.random(config.residential.min * 100, config.residential.max * 100) / 100
       local commercial = math.random(config.commercial.min * 100, config.commercial.max * 100) / 100
       local industrial = math.random(config.industrial.min * 100, config.industrial.max * 100) / 100
 
-      state.baseCapacity.scalingFactors[town.id] = {
+      scalingFactors[town.id] = {
         residential = residential,
         commercial = commercial,
         industrial = industrial,
       }
       
-      log.debug('town ' .. town.name .. ' has scaling factors:\n' .. serialization.stringify(state.baseCapacity.scalingFactors[town.id]))
+      log.debug('town ' .. town.name .. ' has scaling factors:\n' .. serialization.stringify(scalingFactors[town.id]))
     end
   )
+
+  return scalingFactors
 end
 
 local function setTownCapacities()
@@ -232,7 +236,7 @@ end
 local function init()
   log.info('initializing mod...')
 
-  setBaseCapacityScalingFactors()
+  state.baseCapacity.scalingFactors = createBaseCapacityScalingFactors()
   setTownCapacities()
 end
 
@@ -289,7 +293,7 @@ function data()
   return {
     init = init,
     update = update,
-		save = save,
+    save = save,
     load = load,
   }
 end
