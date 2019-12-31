@@ -1,12 +1,75 @@
 function data()
-	return {
-		en = {
-			Name = 'Natural Town Growth',
-			Description = 'Towns grow based on your actions, e.g. if you provide industrial cargo, the town\'s industry will grow.',
-		},
-		de = {
-			Name = 'Natürliches Stadtwachstum',
-			Description = 'Städte wachsen abhängig von deinen Handlungen, z.B. wächst die Industrie der Stadt wenn du sie mit industriellen Gütern belieferst.',
-		},
-	}
+  return {
+    en = {
+      Name = 'Natural Town Growth',
+      Description = 'Towns grow more naturally. Your actions will influence the growth directly and can cause towns to grow '
+                 .. 'asymmetrically, e.g. if you provide industrial cargo, the town\'s industry will grow, if you provide '
+                 .. 'commercial cargo the town will gain more shopping facilities. Towns will start out smaller, but can grow '
+                 .. 'much larger.\n'
+                 .. '\n'
+                 .. 'Details:\n'
+                 .. '\n'
+                 .. 'By default, the game randomly determines an initial size for each town roughly in the range of 80 - 220. '
+                 .. 'This number does not change much over time (there are small random increases which may increase the initial '
+                 .. 'size to roughly 330 at the year 2000) which means some towns will forever be stuck with a smaller size than '
+                 .. 'others due to a "bad roll" at the start of the game. Your actions can only affect the size of a town through '
+                 .. 'the percentage modifier based on the supply rating, reachability and environmental factors. This percentage '
+                 .. 'modifier is applied evenly to residential, commercial, and industrial sizes, meaning those values will always '
+                 .. 'be roughly equal.\n'
+                 .. '\n'
+                 .. 'This mod changes town growth to provide you with more control. Initially, each town still gets a random size '
+                 .. 'but with less variance. In addition, residential, commercial, and industrial sizes are determined independently '
+                 .. '(the town details window shows only one "initial size" but each of the three areas does in fact have its own '
+                 .. 'value). These "initial sizes" grow over time based on your actions. Industrial cargo causes more industrial '
+                 .. 'buildings to spawn, and vice versa for commercial cargo. All sizes are also affected by the town\'s reachability. '
+                 .. 'Residential size depends more on reachability while commercial and industrial sizes depend more on supply. '
+                 .. 'The original percentage modifier still exists (since it is not possible to remove it) which means an increase '
+                 .. 'in reachability, supply, or environmental factors still affects all sizes. Please note that the game seems to '
+                 .. 'have a built-in limit to how large towns can grow, so at some point you may see a town stop growing regardless '
+                 .. 'of the "target size".\n'
+                 .. '\n'
+                 .. 'See the last image above for a detailed look into the numbers. Note that the "scaling factors" are only used for '
+                 .. 'the base capacity, meaning their impact grows smaller over time once you start connecting the city and supplying '
+                 .. 'it with cargo.\n'
+                 .. '\n'
+                 .. 'The source code for this mod can be found [url=https://github.com/MrWolfZ/transport-fever-2-natural-town-growth]here[/url].',
+    },
+    de = {
+      Name = 'Natürliches Stadtwachstum',
+      Description = 'Städte wachsen natürlicher. Deine Handlungen beeinflussen das Wachstum der Städte direkt und können dazu führen, '
+                 .. 'dass sie asymmetrisch wachsen. Wenn du industrielle Güter lieferst wächst die Industrie der Stadt, wenn du '
+                 .. 'geschäftliche Güter lieferst gibt es mehr Einkaufsmöglichkeiten. Städte fangen kleiner an, aber können deutlich '
+                 .. 'grösser werden.\n'
+                 .. '\n'
+                 .. 'Details:\n'
+                 .. '\n'
+                 .. 'Notiz: Ich spiele das Spiel auf Englisch, daher bin ich mir bei manchen der deutschen Begriffe nicht ganz sicher. '
+                 .. 'Ich hoffe der Text unten ist dennoch verständlich. Korrekturen nehme ich gerne per Kommentar an.\n'
+                 .. '\n'
+                 .. 'Standardmässig vergibt das Spiel anfänglich eine zufällige Grösse für jede Stadt, ungefähr im Bereich 80 - 220. '
+                 .. 'Diese Zahl ändert sich nicht stark mit der Zeit (es gibt kleinere zufällige Erhöhungen welche die anfängliche Grösse '
+                 .. 'auf ungefähr 330 im Jahr 2000 wachsen lassen können), d.h. manche Städte sind für immer kleiner als andere '
+                 .. 'aufgrund eines schlechten "Würfelwurfs" am Anfang des Spields. Deine Handlungen können die Grösse einer Stadt nur '
+                 .. 'durch den Prozent-Modifikator beeinflussen, welcher abhängig von Lieferungen, Erreichbarkeit und Umwelteinflüssen '
+                 .. 'ist. Dieser Modifikator wird gleichmässig auf Einwohnerzahl und Anzahl von industriellen und Geschäftsgebäuden '
+                 .. 'angewendet, d.g. diese Werte sind immer ungefähr gleich.\n'
+                 .. '\n'
+                 .. 'Diese Modifikation gibt dir mehr Kontrolle über die Grösse der Städte. Zu Beginn bekommt jede Stadt immer noch eine '
+                 .. 'zufällige Grösse, aber mit weniger Varianz. Zusätzlich werden Anzahl von Wohn-, Industrie-, und Geschäftsgebäuden '
+                 .. 'unabhängig bestimmt (die Stadtdetails zeigen nur eine "anfängliche Grösse", aber jeder der drei Bereiche hat einen  '
+                 .. 'eigenen Wert). Diese "anfänglichen Grössen" wachsen mit der Zeit abhängig von deinen Handlungen. Industrielle Güter '
+                 .. 'führen zu mehr Industrie, das Gleiche gilt für geschäftliche Güter. All Grössen werden auch von der Erreichbarkeit '
+                 .. 'der Stadt beeinflusst. Die Anzahl von Wohngebäuden hängt stärker von der Erreichbarkeit ab, während die Anzahl von '
+                 .. 'Industrie- und Geschäftsgebäuden mehr von Güterlieferungen abhängt. Der ursprüngliche Prozent-Modifikator existiert '
+                 .. 'noch immer (da man ihn nicht entfernen kann), d.h. eine Verbesserung in Erreichbarkeit, Güterlieferungen oder '
+                 .. 'Umwelteinflüssen hat weiterhin einen Effekt auf alle Bereiche. Bitte beachte, dass das Spiel anscheinend ein '
+                 .. 'eingebautes Grössenlimit hat und daher kann es sein, dass Städte aufhören zu wachsen, selbst wenn das Spiel einen '
+                 .. 'grösseren Zielwert angibt.\n'
+                 .. '\n'
+                 .. 'Das letzte Bild oben zeigt detailierte Zahlen. Die "scaling factors" beeinflussen nur die Grösse zum Beginn des '
+                 .. 'Spiels, d.h. ihr Einfluss sinkt mit der Zeit wenn du anfängst die Stadt zu verbinden und mit Gütern zu beliefern.\n'
+                 .. '\n'
+                 .. 'Der Quellcode kann [url=https://github.com/MrWolfZ/transport-fever-2-natural-town-growth]hier[/url] gefunden werden.',
+    },
+  }
 end
