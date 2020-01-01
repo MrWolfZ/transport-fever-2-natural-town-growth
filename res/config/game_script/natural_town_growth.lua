@@ -130,34 +130,28 @@ local function calculateIndustrialCapacity(town)
   return industrialCapacity
 end
 
-local function createBaseCapacityScalingFactors()
-  log.debug('setting town scaling factors...')
-
+local function createBaseCapacityScalingFactorsForTown(town)
+  log.debug('setting town scaling factors for ' .. town.name .. '...')
+  
   local config = util.getSettings().baseCapacity.scalingFactors
 
   -- I observed math.random always returning the same numbers, therefore
   -- we forcefully reseed the random generator
   math.randomseed(os.time())
 
-  local scalingFactors = {}
+  local residential = math.random(config.residential.min * 100, config.residential.max * 100) / 100
+  local commercial = math.random(config.commercial.min * 100, config.commercial.max * 100) / 100
+  local industrial = math.random(config.industrial.min * 100, config.industrial.max * 100) / 100
 
-  util.forEachTown(
-    function(town)
-      local residential = math.random(config.residential.min * 100, config.residential.max * 100) / 100
-      local commercial = math.random(config.commercial.min * 100, config.commercial.max * 100) / 100
-      local industrial = math.random(config.industrial.min * 100, config.industrial.max * 100) / 100
+  local result = {
+    residential = residential,
+    commercial = commercial,
+    industrial = industrial,
+  }
+  
+  log.debug('town ' .. town.name .. ' has scaling factors:\n' .. serialization.stringify(result))
 
-      scalingFactors[town.id] = {
-        residential = residential,
-        commercial = commercial,
-        industrial = industrial,
-      }
-      
-      log.debug('town ' .. town.name .. ' has scaling factors:\n' .. serialization.stringify(scalingFactors[town.id]))
-    end
-  )
-
-  return scalingFactors
+  return result
 end
 
 local function setTownCapacities()
@@ -166,6 +160,11 @@ local function setTownCapacities()
   util.forEachTown(
     function(town)
       local currentEpoch = util.getEpoch()
+
+      -- ensure scaling factors are created
+      if not state.baseCapacity.scalingFactors[town.id] then
+        state.baseCapacity.scalingFactors[town.id] = createBaseCapacityScalingFactorsForTown(town)
+      end
 
       -- ensure capacities for city are initialized
       state.capacitiesByTownId[town.id] = state.capacitiesByTownId[town.id] or {
@@ -236,7 +235,6 @@ end
 local function init()
   log.info('initializing mod...')
 
-  state.baseCapacity.scalingFactors = createBaseCapacityScalingFactors()
   setTownCapacities()
 end
 
