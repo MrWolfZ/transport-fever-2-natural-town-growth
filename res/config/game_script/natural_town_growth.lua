@@ -115,7 +115,7 @@ local function calculateIndustrialCapacity(town)
 
   log.trace('town ' .. town.name .. ' has industrial cargo supply of ' .. sumOfIndustrialCargoSupplies)
 
-  local config = util.getSettings().growth.commercial
+  local config = util.getSettings().growth.industrial
 
   local scaledBaseCapacity = getBaseCapacity() * state.baseCapacity.scalingFactors[town.id].industrial
   local capacityFromSupply = sumOfIndustrialCargoSupplies * config.cargoSupplyFactor
