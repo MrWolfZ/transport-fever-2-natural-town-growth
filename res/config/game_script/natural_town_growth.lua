@@ -199,7 +199,7 @@ local function setTownCapacities()
         capacities.residential.value = residential
         capacities.residential.setAtEpoch = currentEpoch
       else
-        log.debug('skipping residential size decrease for town ' .. town.name .. ' since only ' .. secondsSinceLastResidentialUpdate .. ' seconds have passed since last update...')
+        log.debug('skipping residential size decrease from ' .. prevResidential .. ' to ' .. residential .. ' for town ' .. town.name .. ' since only ' .. secondsSinceLastResidentialUpdate .. ' seconds have passed since last update...')
       end
 
       local secondsSinceLastCommercialUpdate = currentEpoch - capacities.commercial.setAtEpoch
@@ -209,7 +209,7 @@ local function setTownCapacities()
         capacities.commercial.value = commercial
         capacities.commercial.setAtEpoch = currentEpoch
       else
-        log.debug('skipping commercial size decrease for town ' .. town.name .. ' since only ' .. secondsSinceLastCommercialUpdate .. ' seconds have passed since last update...')
+        log.debug('skipping commercial size decrease from ' .. prevCommercial .. ' to ' .. commercial .. ' for town ' .. town.name .. ' since only ' .. secondsSinceLastCommercialUpdate .. ' seconds have passed since last update...')
       end
 
       local secondsSinceLastIndustrialUpdate = currentEpoch - capacities.industrial.setAtEpoch
@@ -219,7 +219,7 @@ local function setTownCapacities()
         capacities.industrial.value = industrial
         capacities.industrial.setAtEpoch = currentEpoch
       else
-        log.debug('skipping industrial size decrease for town ' .. town.name .. ' since only ' .. secondsSinceLastIndustrialUpdate .. ' seconds have passed since last update...')
+        log.debug('skipping industrial size decrease from ' .. prevIndustrial .. ' to ' .. industrial .. ' for town ' .. town.name .. ' since only ' .. secondsSinceLastIndustrialUpdate .. ' seconds have passed since last update...')
       end
 
       game.interface.setTownCapacities(
@@ -249,6 +249,7 @@ local function update()
   end
 
   setTownCapacities()
+  state.lastUpdatedAtEpoch = currentEpoch
 end
 
 local function save()
